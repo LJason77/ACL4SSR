@@ -1557,7 +1557,7 @@
 (^|\.)\w*telegram\w*\.\w*$
 (^|\.)\w*twitter\w*\.\w*$
 (^|\.)\w*whatsapp\w*\.\w*$
-(^|\.)\w*droid\w*\.\w*$
+(^|\.)\w*f-droid\w*\.\w*$
 
 #GFWList
 (^|\.)(.*)\.2\.bahamut\.com\.tw$
