@@ -1496,6 +1496,7 @@
 (^|\.)ec2-54-210-54-246\.computer-1\.amazonaws\.com$
 (^|\.)raw\.githubusercontent\.com$
 (^|\.)gameguardian\.net$
+(^|\.)luckypatchers\.com$
 
 #GFWList IP start
 85.17.73.31
