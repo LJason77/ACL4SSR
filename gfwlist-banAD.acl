@@ -1502,6 +1502,7 @@
 (^|\.)raw\.githubusercontent\.com$
 (^|\.)gameguardian\.net$
 (^|\.)luckypatchers\.com$
+(^|\.)ptwxz\.com$
 
 #GFWList IP start
 85.17.73.31
