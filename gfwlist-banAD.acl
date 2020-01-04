@@ -1486,17 +1486,23 @@
 [proxy_list]
 
 # MyList
+(^|\.)f\-droid\.org$
+(^|\.)paypal\.com$
+(^|\.)warframe\.com$
 (^|\.)apkmirror\.com$
 (^|\.)bit\.no\.com$
 (^|\.)btlibrary\.me$
 (^|\.)cccat\.cc$
 (^|\.)cloudcone\.com$
 (^|\.)cloudfront\.net$
+(^|\.)co\.jp$
 (^|\.)dmm\.co\.jp$
 (^|\.)githubusercontent\.com$
 (^|\.)gvt\w\.com$
 (^|\.)microsoft\.com$
 (^|\.)ping\.pe$
+(^|\.)ptwxz\.com$
+(^|\.)amazonaws\.com$
 (^|\.)s3\.amazonaws\.com$
 (^|\.)tumbex\.com$
 (^|\.)tvb\.com$
@@ -1510,7 +1516,25 @@
 (^|\.)raw\.githubusercontent\.com$
 (^|\.)gameguardian\.net$
 (^|\.)luckypatchers\.com$
-(^|\.)ptwxz\.com$
+(^|\.)ubuntu\.com$
+(^|\.)unity3d\.com$
+(^|\.)unity\.com$
+(^|\.)pythonhosted\.org$
+(^|\.)nintendo\.com$
+(^|\.)nintendo\.net$
+(^|\.)1password\.com$
+(^|\.)ubisoft\.com$
+(^|\.)ubi\.com$
+(^|\.)gvt2\.com$
+(^|\.)com\.hk$
+(^|\.)com\.tw$
+(^|\.)discord\.gg$
+(^|\.)discord\.media$
+(^|\.)visualstudio\.com$
+(^|\.)raspberrypi\.org$
+(^|\.)jetbrains\.com$
+(^|\.)chelpus\.com$
+(^|\.)githubassets\.com$
 
 #GFWList IP start
 85.17.73.31
@@ -1572,7 +1596,6 @@
 (^|\.)\w*telegram\w*\.\w*$
 (^|\.)\w*twitter\w*\.\w*$
 (^|\.)\w*whatsapp\w*\.\w*$
-(^|\.)\w*f-droid\w*\.\w*$
 
 #GFWList
 (^|\.)(.*)\.2\.bahamut\.com\.tw$
