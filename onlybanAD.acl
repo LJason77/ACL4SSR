@@ -1,6 +1,6 @@
 #**********************************************************************
-# 06.11
-# 2019年6月11日10:35:08
+# 01.04
+# 2020年1月4日13:38:55
 # 转载需要注明版权和来源
 #
 # 屏蔽常用网站、视频、手机rom广告&运营商劫持广告&数据跟踪&开屏广告
@@ -37,17 +37,23 @@
 (^|\.)\w*adsmogo\w*\.\w*$
 (^|\.)\w*adsrvmedia\w*\.\w*$
 (^|\.)\w*adsserving\w*\.\w*$
+(^|\.)\w*adsystem\w*\.\w*$
 (^|\.)\w*adwords\w*\.\w*$
 (^|\.)\w*analysis\w*\.\w*$
 (^|\.)\w*analytics\w*\.\w*$
 (^|\.)\w*applovin\w*\.\w*$
+(^|\.)\w*appsflyer\w*\.\w*$
+(^|\.)\w*domob\w*\.\w*$
 (^|\.)\w*duomeng\w*\.\w*$
 (^|\.)\w*dwtrack\w*\.\w*$
 (^|\.)\w*guanggao\w*\.\w*$
 (^|\.)\w*lianmeng\w*\.\w*$
 (^|\.)\w*monitor\w*\.\w*$
+(^|\.)\w*omgmta\w*\.\w*$
+(^|\.)\w*omniture\w*\.\w*$
 (^|\.)\w*openx\w*\.\w*$
 (^|\.)\w*partnerad\w*\.\w*$
+(^|\.)\w*pingfore\w*\.\w*$
 (^|\.)\w*socdm\w*\.\w*$
 (^|\.)\w*supersonicads\w*\.\w*$
 (^|\.)\w*tracking\w*\.\w*$
@@ -1499,10 +1505,11 @@
 (^|\.)bit\.no\.com$
 (^|\.)btlibrary\.me$
 (^|\.)cccat\.cc$
+(^|\.)cloudcone\.com$
 (^|\.)cloudfront\.net$
 (^|\.)dmm\.co\.jp$
+(^|\.)githubusercontent\.com$
 (^|\.)gvt\w\.com$
-(^|\.)ip138\.com$
 (^|\.)microsoft\.com$
 (^|\.)ping\.pe$
 (^|\.)s3\.amazonaws\.com$
@@ -1550,6 +1557,7 @@
 (^|\.)bandwagonhost\.com$
 (^|\.)bbc\.co$
 (^|\.)bbc\.com$
+(^|\.)bing\.com$
 (^|\.)bkrtx\.com$
 (^|\.)blogcdn\.com$
 (^|\.)blogger\.com$
@@ -1577,8 +1585,6 @@
 (^|\.)edgecastcdn\.net$
 (^|\.)edgekey\.net$
 (^|\.)edgesuite\.net$
-(^|\.)en\.m\.wikipedia\.org$
-(^|\.)en\.wikipedia\.org$
 (^|\.)eu-west-1\.console\.aws\.amazon\.com$
 (^|\.)eurekavpt\.com$
 (^|\.)facebook\.com$
@@ -1586,13 +1592,13 @@
 (^|\.)fb\.com$
 (^|\.)fb\.me$
 (^|\.)fbcdn\.net$
+(^|\.)fbsbx\.com$
 (^|\.)firebaseio\.com$
 (^|\.)flickr\.com$
 (^|\.)flipboard\.com$
 (^|\.)gfx\.ms$
 (^|\.)gist\.github\.com$
 (^|\.)gongm\.in$
-(^|\.)googleapis\.cn$
 (^|\.)gstatic\.cn$
 (^|\.)gstatic\.com$
 (^|\.)gvt0\.com$
@@ -1658,15 +1664,11 @@
 (^|\.)vine\.co$
 (^|\.)vox-cdn\.com$
 (^|\.)wikileaks\.org$
-(^|\.)wuu\.wikipedia\.org$
-(^|\.)www\.wikipedia\.org$
 (^|\.)www\.youtube-nocookie\.com$
 (^|\.)youtu\.be$
 (^|\.)youtube\.com$
 (^|\.)ytimg\.com$
-(^|\.)zh-yue\.wikipedia\.org$
-(^|\.)zh\.m\.wikipedia\.org$
-(^|\.)zh\.wikipedia\.org$
+(^|\.)wikipedia\.org$
 
 # Other
 (^|\.)doub\.io$
@@ -1688,9 +1690,11 @@
 (^|\.)discordapp\.com$
 (^|\.)discordapp\.net$
 
-# Epicgames
-(^|\.)\w*epicgames\w*\.\w*$
-(^|\.)helpshift\.com$
+# Google
+(^|\.)googleapis\.cn$
+(^|\.)googleapis\.com$
+(^|\.)1e100\.net
+(^|\.)app-measurement\.net
 
 # Hulu
 (^|\.)hulu\.com$
