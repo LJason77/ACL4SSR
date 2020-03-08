@@ -15,6 +15,12 @@ socks-port: 7891
 # 允许局域网的连接（可用来共享代理）
 allow-lan: true
 
+# 仅在将allow-lan设置为true时适用
+# #"*": 绑定所有IP地址
+# #192.168.122.11: 绑定单个IPv4地址
+# #"[aaaa::a8aa:ff:fe09:57d8]": 绑定单个IPv6地址
+# bind-address: "*"
+
 # 规则模式：Rule（规则） / Global（全局代理）/ Direct（全局直连）
 mode: Rule
 
@@ -27,64 +33,60 @@ external-controller: '127.0.0.1:9090'
 
 # 您可以将静态网页资源（如 clash-dashboard）放置在一个目录中，clash 将会服务于 `RESTful API/ui`
 # 参数应填写配置目录的相对路径或绝对路径。
+# http://127.0.0.1:9090/ui/#/
 # external-ui: folder
+# yacd面板：  https://github.com/haishanh/yacd
+# Razord面板：http://clash.razord.top/#/proxies
+# external-ui: dashboard
 
 # RESTful API 的口令 (可选)
 # secret: ""
+
+# 实验性功能
+experimental:
+  ignore-resolve-fail: true # 忽略 DNS 解析失败，默认值为 true
+  # interface-name: en0 # outbound interface name
 
 # 本地 SOCKS5 / HTTP(S) 服务认证
 # authentication:
 #  - "user1:pass1"
 #  - "user2:pass2"
 
-# 实验性功能
-experimental:
-  ignore-resolve-fail: true # 忽略 DNS 解析失败，默认值为 true
-
-# 代理组
-# 下面这3个不要引到订阅里去 要不会出错
-# Will be ignored after profile selection
-Proxy:
-  - name: Shadowsocks
-    type: socks5
-    server: 127.0.0.1
-    port: 1080
-Proxy Group:
-  - name: Proxy
-    type: select
-    proxies:
-      - Shadowsocks
-Rule:
-  - 'MATCH,DIRECT'
+# 实验性功能 hosts, 支持通配符 (例如 *.clash.dev 甚至 *.foo.*.example.com)
+# 静态的域名 比 通配域名 具有更高的优先级 (foo.example.com 优先于 *.example.com)
+# 注意: hosts 在 fake-ip 模式下不生效
+#hosts:
+#   '*.clash.dev': 127.0.0.1
+#   'alpha.clash.dev': '::1'
 
 #dns:
-#  enable: true
-#  ipv6: false
-#  listen: 0.0.0.0:53
-#  enhanced-mode: redir-host # 或 fake-ip
-#     # fake-ip-range: 198.18.0.1/16 # 如果你不知道这个参数的作用，请勿修改
-#     # 实验性功能 hosts, 支持通配符 (例如 *.clash.dev 甚至 *.foo.*.example.com)
-#     # 静态的域名 比 通配域名 具有更高的优先级 (foo.example.com 优先于 *.example.com)
-#     # 注意: hosts 在 fake-ip 模式下不生效
-#  hosts:
-#     '*.clash.dev': 127.0.0.1
-#     'alpha.clash.dev': '::1'
-#  nameserver:
-#     - 117.50.10.10
-#     - 114.114.114.114
-#     - 119.29.29.29
-#     - 180.76.76.76
-#     - 1.2.4.8
-#     - 223.5.5.5
-#     - 8.8.8.8
-#     #- https://dns.rubyfish.cn/dns-query
-#  fallback:
-#     - tls://dns.rubyfish.cn:853
-#     - tls://1.0.0.1:853
-#     - tls://dns.google:853
-#     #- https://dns.rubyfish.cn/dns-query
-#     #- https://cloudflare-dns.com/dns-query
-#     #- https://dns.google/dns-query
+  #enable: true # 是否启用dns false
+  #ipv6: false
+  #listen: 0.0.0.0:53
+  #enhanced-mode: redir-host # 模式：redir-host或fake-ip
+  #fake-ip-range: 198.18.0.1/16 #
+  #fake-ip-filter: # fake ip 白名单列表，如果你不知道这个参数的作用，请勿修改
+     #- '*.lan'
+     #- localhost.ptlogin2.qq.com
+  #nameserver:
+     #- 223.5.5.5 # 阿里DNS
+     #- 180.76.76.76 # 百度DNS
+     #- 119.29.29.29 # 腾讯DNS
+     #- 117.50.10.10 # ONE DNS纯净版
+     #- 114.114.114.114 # 114DNS
+  #fallback:
+     #- 8.8.8.8 # 谷歌DNS
+     #- 1.1.1.1 # Cloudflare DNS
+     #- tls://dns.rubyfish.cn:853
+     #- tls://1.0.0.1:853
+     #- tls://dns.google:853
+     #- https://dns.rubyfish.cn/dns-query
+     #- https://cloudflare-dns.com/dns-query
+     #- https://dns.google/dns-query
+  #fallback-filter:
+     #geoip: true # 默认
+     #ipcidr: # 在这个网段内的 IP 地址会被考虑为被污染的 IP
+       #- 240.0.0.0/4
 
 # 1. clash DNS 请求逻辑：
 #   (1) 当访问一个域名时， nameserver 与 fallback 列表内的所有服务器并发请求，得到域名对应的 IP 地址。
@@ -104,11 +106,21 @@ Rule:
 #   DoT: 以 tls:// 开头的 DNS 服务器。拥有更高的安全性和查询效率，但端口有可能被管制或封锁。
 #   若要了解更多关于 DoH/DoT 相关技术，请自行查阅规范文档。
 
-# fallback-filter:
-#   geoip: true # 默认
-#   ipcidr: # 在这个网段内的 IP 地址会被考虑为被污染的 IP
-#     - 240.0.0.0/4
-
+# 代理组
+# 下面这3个不要引到订阅里去 要不会出错
+# Will be ignored after profile selection
+Proxy:
+  - name: Shadowsocks
+    type: socks5
+    server: 127.0.0.1
+    port: 1080
+Proxy Group:
+  - name: Proxy
+    type: select
+    proxies:
+      - Shadowsocks
+Rule:
+  - 'MATCH,DIRECT'
 
 # Clash for Windows
 # Proxies module latency test settings
@@ -121,23 +133,40 @@ cfw-latency-url: http://www.gstatic.com/generate_204
 # Options for profile: true, false
 # Options for mode: true, false
 cfw-conn-break-strategy:
-  proxy: none   # none/chain/all
+  proxy: none # none/chain/all
   profile: true # true/false
-  mode: false   # true/false
+  mode: false # true/false
+
+# 定义状态栏图标
+#cfw-tray-icon:
+#default: .\resources\static\imgs\logo_64.png        # 默认图标
+#system-proxy-on: .\resources\static\imgs\custom.ico   # 开启系统代理后图标
 
 # 子进程
 # Run child process after CFW started
 # Refer: https://docs.cfw.lbyczf.com/contents/childprocess.html
 #cfw-child-process:
-#  # 启动订阅转换程序，端口号7893
-#  - command: "subconverter.exe"  # 程序名称subconverter.exe -cfw >>logs/run.log 2>&1
-#    args:
-#      - "-cfw"
-#      #- "-t" # 运行参数1
-#      #- "abcdefghijk" # 运行参数2
-#    options:
-#      cwd: .\subconverter # 子进程工作目录
-#      #shell: true # 子进程工作目录
+  # 启动订阅转换程序，端口号7893
+  #- command: "subconverter.exe" # run.cmd 程序名称 subconverter.exe -cfw >>logs/run.log 2>&1
+    #args:
+      #- "-cfw" # 运行参数1
+      #- "-f" # 运行参数2
+      #- "pref-acl4ssr.yml" # 运行参数3
+    #options:
+      #cwd: subconverter # 子进程工作目录
+      #detached: true # 子进程独立于其父进程运行
+      #shell: true # 则在 shell 中运行 command
+      #windowsHide: true # 隐藏子进程的控制台窗口
+  # 启动网易云，端口号3333
+  #- command: "unblockneteasemusic.exe" # run.cmd 程序名称 subconverter.exe -cfw >>logs/run.log 2>&1
+    #args:
+      #- "-p" # 运行参数1
+      #- "3333" # 运行参数2
+    #options:
+      #cwd: unblockNeteaseMusic # 子进程工作目录
+      #detached: true # 子进程独立于其父进程运行
+      #shell: true # 则在 shell 中运行 command
+      #windowsHide: true # 隐藏子进程的控制台窗口
 
 # 系统代理跳过列表 cfw-bypass
 # System proxy will ignore these domains(or ipnet)
@@ -145,6 +174,7 @@ cfw-conn-break-strategy:
 # 使用时可以将cfw-bypass-bak与cfw-bypass内容互换
 cfw-bypass-bak:
   # 原有字段不用删除
+  - qq.com
   - 'music.163.com' # 网易云域名1
   - '*.music.126.net' # 网易云域名2
   - localhost
@@ -171,7 +201,18 @@ cfw-bypass-bak:
 # 系统代理跳过列表 起作用的
 cfw-bypass:
   # 直连列表
+  # MyList
+  - "*.423down.com"
+  - "*.bitwarden.com"
+  - "*.chaipip.com"
+  - "*.hrtsea.com"
+  - "*.laomo.me"
+  - "*.mpyit.com"
+  # CN域名直连
   - "*.cn"
+  - "*.中国"
+  - "*.公司"
+  - "*.网络"
   # 中国国内常见域名关键词直连
   - "*-cn*"
   - "*360buy*"
@@ -195,8 +236,11 @@ cfw-bypass:
   - "*.360.com"
   - "*.360kuai.com"
   - "*.360safe.com"
+  - "*.dhrest.com"
   - "*.qhres.com"
   - "*.qhstatic.com"
+  - "*.qhupdate.com"
+  - "*.so.com"
   # 4399
   - "*.4399.com"
   - "*.4399pk.com"
@@ -205,9 +249,11 @@ cfw-bypass:
   # 58
   - "*.58.com"
   # Alibaba
+  - "*.1688.com"
   - "*.aliapp.org"
   - "*.alibaba.com"
   - "*.alibabacloud.com"
+  - "*.alibabausercontent.com"
   - "*.alicdn.com"
   - "*.aliexpress.com"
   - "*.aliimg.com"
@@ -221,6 +267,7 @@ cfw-bypass:
   - "*.amap.com"
   - "*.autonavi.com"
   - "*.dingtalk.com"
+  - "*.ele.me"
   - "*.hichina.com"
   - "*.mmstat.com"
   - "*.mxhichina.com"
@@ -231,36 +278,23 @@ cfw-bypass:
   - "*.tbcdn.com"
   - "*.tmall.com"
   - "*.tmall.hk"
+  - "*.ucweb.com"
   - "*.xiami.com"
   - "*.xiami.net"
   - "*.ykimg.com"
   - "*.youku.com"
-  # Apple
-  - "*.aaplimg.com"
-  - "*.akadns.net"
-  - "*.apple-cloudkit.com"
-  - "*.apple.co"
-  - "*.apple.com"
-  - "*.appstore.com"
-  - "*.cdn-apple.com"
-  - "*.crashlytics.com"
-  - "*.icloud-content.com"
-  - "*.icloud.com"
-  - "*.me.com"
-  - "*.mzstatic.com"
   # Baidu
   - "*.baidu.com"
   - "*.baidubcr.com"
   - "*.baidupcs.com"
   - "*.baidustatic.com"
   - "*.bcebos.com"
+  - "*.bdimg.com"
   - "*.bdstatic.com"
+  - "*.bdurl.net"
   - "*.hao123.com"
   - "*.hao123img.com"
-  - "*.iqiyi.com"
-  - "*.iqiyipic.com"
   - "*.jomodns.com"
-  - "*.ppsimg.com"
   - "*.yunjiasu-cdn.net"
   # Bilibili
   - "*.acg.tv"
@@ -268,8 +302,6 @@ cfw-bypass:
   - "*.b23.tv"
   - "*.biliapi.com"
   - "*.biliapi.net"
-  - "*.bilibili.com"
-  - "*.bilibili.tv"
   - "*.biligame.com"
   - "*.biligame.net"
   - "*.bilivideo.com"
@@ -280,13 +312,19 @@ cfw-bypass:
   - "*.battlenet.com"
   - "*.blizzard.com"
   # ByteDance
-  - "*.bytecdn.cn"
   - "*.bytedance.com"
+  - "*.byteimg.com"
   - "*.feiliao.com"
+  - "*.gifshow.com"
+  - "*.huoshan.com"
   - "*.iesdouyin.com"
+  - "*.ixigua.com"
+  - "*.kaishou.com"
+  - "*.kspkg.com"
   - "*.pstatp.com"
   - "*.snssdk.com"
   - "*.toutiao.com"
+  - "*.yximgs.com"
   # CCTV
   - "*.cctv.com"
   - "*.cctvpic.com"
@@ -297,6 +335,10 @@ cfw-bypass:
   - "*.didialift.com"
   - "*.didiglobal.com"
   - "*.udache.com"
+  # Douyu 斗鱼
+  - "*.douyu.com"
+  - "*.douyu.tv"
+  - "*.douyutv.com"
   # Epic
   - "*.epicgames.com"
   - "*.helpshift.com"
@@ -316,13 +358,24 @@ cfw-bypass:
   - "*.iflyink.com"
   - "*.iflyrec.com"
   - "*.iflytek.com"
+  # Iqiyi
+  - "*.71.am"
+  - "*.71edge.com"
+  - "*.iqiyi.com"
+  - "*.iqiyipic.com"
+  - "*.ppsimg.com"
+  - "*.qiyi.com"
+  - "*.qiyipic.com"
+  - "*.qy.net"
   # JD
+  - "*.360buy.com"
   - "*.360buyimg.com"
-  - "*.jdcloud.com"
   - "*.jcloudcs.com"
   - "*.jd.com"
   - "*.jd.hk"
+  - "*.jdcloud.com"
   - "*.jdpay.com"
+  - "*.paipai.com"
   # Kingsoft
   - "*.iciba.com"
   - "*.ksosoft.com"
@@ -332,22 +385,29 @@ cfw-bypass:
   - "*.meitudata.com"
   - "*.meitustat.com"
   - "*.meipai.com"
+  # LeTV 乐视
+  - "*.le.com"
+  - "*.lecloud.com"
+  - "*.letv.com"
+  - "*.letvcloud.com"
+  - "*.letvimg.com"
+  - "*.letvlive.com"
+  - "*.letvstore.com"
+  # MGTV 芒果TV
+  - "*.hitv.com"
+  - "*.hunantv.com"
+  - "*.mgtv.com"
   # MI
   - "*.duokan.com"
   - "*.mi-img.com"
+  - "*.mi.com"
   - "*.miui.com"
   - "*.miwifi.com"
   - "*.xiaomi.com"
-  # Microsoft
-  - "*.microsoft.com"
-  - "*.msecnd.net"
-  - "*.office365.com"
-  - "*.outlook.com"
-  - "*.s-microsoft.com"
-  - "*.visualstudio.com"
-  - "*.windows.com"
-  - "*.windowsupdate.com"
+  - "*.xiaomi.net"
+  - "*.xiaomicp.com"
   # NetEase
+  - "*.126.com"
   - "*.126.net"
   - "*.127.net"
   - "*.163.com"
@@ -356,21 +416,23 @@ cfw-bypass:
   - "*.netease.com"
   - "*.ydstatic.com"
   - "*.youdao.com"
+  # PPTV、PPLive
+  - "*.pplive.com"
+  - "*.pptv.com"
+  # PDD 拼多多
+  - "*.pinduoduo.com"
+  - "*.yangkeduo.com"
   # Sina
+  - "*.leju.com"
   - "*.miaopai.com"
-  - "*.sina.cn"
   - "*.sina.com"
-  - "*.sina.com.cn"
   - "*.sinaapp.com"
-  - "*.sinaimg.cn"
   - "*.sinaimg.com"
-  - "*.sinajs.cn"
-  - "*.t.cn"
   - "*.weibo.com"
   - "*.weibocdn.com"
   - "*.xiaoka.tv"
   # Sohu Sogo
-  - "*.itc.cn"
+  - "*.go2map.com"
   - "*.sogo.com"
   - "*.sogou.com"
   - "*.sogoucdn.com"
@@ -401,79 +463,129 @@ cfw-bypass:
   - "*.steamcdn-a.akamaihd.net"
   - "*.steamstat.us"
   # Tencent
-  - "*.gtimg.cn"
+  - "*.foxmail.com"
   - "*.gtimg.com"
   - "*.idqqimg.com"
   - "*.igamecj.com"
   - "*.myapp.com"
   - "*.myqcloud.com"
-  - "*.qlogo.cn"
-  - "*.qpic.cn"
   - "*.qq.com"
   - "*.qqmail.com"
-  - "*.qtimg.cn"
+  - "*.qqurl.com"
   - "*.smtcdns.com"
+  - "*.smtcdns.net"
   - "*.soso.com"
   - "*.tencent-cloud.net"
   - "*.tencent.com"
   - "*.tencentmind.com"
+  - "*.tenpay.com"
   - "*.weixin.com"
   - "*.weiyun.com"
-  # Vip
+  # Vip 唯品会
   - "*.appsimg.com"
   - "*.appvipshop.com"
   - "*.vip.com"
   - "*.vipstatic.com"
-  # YYeTs
+  # Ximalaya 喜马拉雅
+  - "*.ximalaya.com"
+  - "*.xmcdn.com"
+  # YYeTs 人人影视
+  - "*.got001.com"
   - "*.jstucdn.com"
   - "*.zimuzu.io"
   - "*.zimuzu.tv"
+  - "*.zmz001.com"
+  - "*.zmz002.com"
+  - "*.zmz003.com"
+  - "*.zmz004.com"
   - "*.zmz2019.com"
   - "*.zmzapi.com"
   - "*.zmzapi.net"
   - "*.zmzfile.com"
-  # Yonyou
-  - "*.yonyou.com"
-  - "*.yonyoucloud.com"
-  - "*.shufafin.com"
+  # Private Tracker
+  - "*.awesome-hd.me"
+  - "*.beitai.pt"
+  - "*.bittorrent.com"
+  - "*.broadcasthe.net"
+  - "*.chdbits.co"
+  - "*.classix-unlimited.co.uk"
+  - "*.empornium.me"
+  - "*.gazellegames.net"
+  - "*.hdchina.org"
+  - "*.hdsky.me"
+  - "*.hdtime.org"
+  - "*.icetorrent.org"
+  - "*.jpopsuki.eu"
+  - "*.keepfrds.com"
+  - "*.leaguehd.com"
+  - "*.m-team.cc"
+  - "*.madsrevolution.net"
+  - "*.msg.vg"
+  - "*.nanyangpt.com"
+  - "*.ncore.cc"
+  - "*.open.cd"
+  - "*.ourbits.club"
+  - "*.passthepopcorn.me"
+  - "*.privatehd.to"
+  - "*.pthome.net"
+  - "*.redacted.ch"
+  - "*.springsunday.net"
+  - "*.tjupt.org"
+  - "*.totheglory.im"
+  # TeamViewer
+  - "*.teamviewer.com"
+  # Public Direct CDN 公共直连cdn
+  - "*.baomitu.com"
+  - "*.bootcss.com"
+  - "*.jiasule.com"
+  - "*.jsdelivr.net"
+  - "*.staticfile.org"
+  - "*.upaiyun.com"
   # Acceleratedirectsites
   - "*.12306.com"
-  - "*.126.com"
-  - "*.1688.com"
+  - "*.17173.com"
   - "*.17k.com"
-  - "*.360.com"
-  - "*.360buy.com"
   - "*.360doc.com"
-  - "*.360safe.com"
   - "*.36kr.com"
+  - "*.3dmgame.com"
+  - "*.51cto.com"
   - "*.51job.com"
   - "*.51jobcdn.com"
   - "*.56.com"
+  - "*.8686c.com"
+  - "*.abchina.com"
   - "*.abercrombie.com"
   - "*.acfun.tv"
   - "*.air-matters.com"
   - "*.air-matters.io"
   - "*.aixifan.com"
   - "*.algocasts.io"
-  - "*.apache.org"
-  - "*.bdimg.com"
+  - "*.babytree.com"
+  - "*.babytreeimg.com"
+  - "*.baicizhan.com"
+  - "*.baidupan.com"
+  - "*.baike.com"
   - "*.biqudu.com"
   - "*.biquge.com"
   - "*.bitauto.com"
-  - "*.bootcss.com"
   - "*.c-ctrip.com"
   - "*.camera360.com"
+  - "*.cdnmama.com"
   - "*.che168.com"
   - "*.chinacache.net"
   - "*.chinaso.com"
   - "*.chinaz.com"
+  - "*.chinaz.net"
+  - "*.chuimg.com"
   - "*.cibntv.net"
   - "*.clouddn.com"
   - "*.cloudxns.net"
-  - "*.cmfu.com"
   - "*.cn163.net"
   - "*.cnbeta.com"
   - "*.cnbetacdn.com"
+  - "*.cnblogs.com"
+  - "*.cnki.net"
+  - "*.cnmstl.net"
   - "*.coolapk.com"
   - "*.coolapkmarket.com"
   - "*.csdn.net"
@@ -484,11 +596,13 @@ cfw-bypass:
   - "*.dilidili.wang"
   - "*.douban.com"
   - "*.doubanio.com"
-  - "*.douyu.com"
+  - "*.dpfile.com"
+  - "*.duowan.com"
+  - "*.dxycdn.com"
   - "*.dytt8.net"
   - "*.easou.com"
+  - "*.eastday.com"
   - "*.eastmoney.com"
-  - "*.ele.me"
   - "*.ecitic.com"
   - "*.ewqcxz.com"
   - "*.fang.com"
@@ -499,7 +613,10 @@ cfw-bypass:
   - "*.firefox.com"
   - "*.frdic.com"
   - "*.fresh-ideas.cc"
+  - "*.ganji.com"
+  - "*.ganjistatic1.com"
   - "*.geetest.com"
+  - "*.geilicdn.com"
   - "*.godic.net"
   - "*.gravatar.com"
   - "*.guazi.com"
@@ -511,6 +628,7 @@ cfw-bypass:
   - "*.hongxiu.com"
   - "*.huajiao.com"
   - "*.hupu.com"
+  - "*.huxiucdn.com"
   - "*.huya.com"
   - "*.ifeng.com"
   - "*.ifengimg.com"
@@ -525,21 +643,21 @@ cfw-bypass:
   - "*.jianshu.io"
   - "*.jianshuapi.com"
   - "*.jiathis.com"
+  - "*.jmstatic.com"
   - "*.jumei.com"
   - "*.kanimg.com"
   - "*.kankan.com"
   - "*.kaola.com"
   - "*.knewone.com"
+  - "*.koowo.com"
+  - "*.ksyungslb.com"
   - "*.kuaidi100.com"
   - "*.kugou.com"
   - "*.lancdns.com"
   - "*.landiannews.com"
-  - "*.le.com"
-  - "*.lecloud.com"
+  - "*.lanzou.com"
   - "*.lemicp.com"
   - "*.letitfly.me"
-  - "*.letv.com"
-  - "*.letvcloud.com"
   - "*.linkedin.com"
   - "*.lizhi.fm"
   - "*.lizhi.io"
@@ -548,28 +666,37 @@ cfw-bypass:
   - "*.luoo.net"
   - "*.lvmama.com"
   - "*.lxdns.com"
+  - "*.maoyan.com"
+  - "*.meilishuo.com"
   - "*.meituan.com"
   - "*.meituan.net"
   - "*.meizu.com"
-  - "*.mi.com"
+  - "*.miguvideo.com"
   - "*.mobike.com"
+  - "*.mogu.com"
+  - "*.mogucdn.com"
+  - "*.mogujie.com"
   - "*.moji.com"
   - "*.moke.com"
+  - "*.mozilla.org"
   - "*.mubu.com"
   - "*.myunlu.com"
   - "*.nruan.com"
   - "*.nuomi.com"
+  - "*.onlinedown.net"
   - "*.oracle.com"
   - "*.oschina.net"
   - "*.ourdvs.com"
   - "*.overcast.fm"
   - "*.paypal.com"
-  - "*.pptv.com"
+  - "*.polyv.net"
   - "*.qbox.me"
   - "*.qcloud.com"
+  - "*.qcloudcdn.com"
   - "*.qdaily.com"
   - "*.qdmm.com"
   - "*.qhimg.com"
+  - "*.qianqian.com"
   - "*.qidian.com"
   - "*.qihucdn.com"
   - "*.qin.io"
@@ -577,30 +704,34 @@ cfw-bypass:
   - "*.qiniucdn.com"
   - "*.qiniudn.com"
   - "*.qiushibaike.com"
-  - "*.qiyi.com"
-  - "*.qiyipic.com"
-  - "*.qqurl.com"
   - "*.quanmin.tv"
   - "*.qunar.com"
+  - "*.qunarzz.com"
   - "*.rarbg.to"
   - "*.repaik.com"
   - "*.rrmj.tv"
   - "*.ruguoapp.com"
+  - "*.runoob.com"
   - "*.sandai.net"
+  - "*.sankuai.com"
+  - "*.segmentfault.com"
+  - "*.sf-express.com"
   - "*.shumilou.net"
   - "*.simplecd.me"
   - "*.sm.ms"
-  - "*.smtcdns.net"
   - "*.smzdm.com"
   - "*.snwx.com"
-  - "*.so.com"
+  - "*.soufunimg.com"
   - "*.ssl-images-amazon.com"
   - "*.sspai.com"
   - "*.startssl.com"
   - "*.suning.com"
-  - "*.tenpay.com"
+  - "*.taihe.com"
   - "*.th-sjy.com"
+  - "*.tianqi.com"
+  - "*.tianqistatic.com"
   - "*.tianyancha.com"
+  - "*.tianyaui.com"
   - "*.tietuku.com"
   - "*.tiexue.net"
   - "*.tmiaoo.com"
@@ -608,10 +739,11 @@ cfw-bypass:
   - "*.ttmeiju.com"
   - "*.tudou.com"
   - "*.tuniu.com"
-  - "*.upaiyun.com"
+  - "*.tuniucdn.com"
+  - "*.umengcloud.com"
   - "*.upyun.com"
   - "*.uxengine.net"
-  - "*.v2ex.com"
+  - "*.videocc.net"
   - "*.vmware.com"
   - "*.wandoujia.com"
   - "*.weather.com"
@@ -619,19 +751,20 @@ cfw-bypass:
   - "*.weidian.com"
   - "*.weiphone.com"
   - "*.weiphone.net"
+  - "*.womai.com"
+  - "*.wscdns.com"
   - "*.xdrig.com"
+  - "*.xhscdn.com"
+  - "*.xiachufang.com"
+  - "*.xiaohongshu.com"
   - "*.xiaojukeji.com"
-  - "*.xiaomi.net"
-  - "*.xiaomicp.com"
-  - "*.ximalaya.com"
   - "*.xinhuanet.com"
   - "*.xitek.com"
   - "*.xiumi.us"
-  - "*.xmcdn.com"
   - "*.xslb.net"
+  - "*.xueqiu.com"
   - "*.xunlei.com"
   - "*.yach.me"
-  - "*.yangkeduo.com"
   - "*.yeepay.com"
   - "*.yhd.com"
   - "*.yihaodianimg.com"
@@ -639,8 +772,9 @@ cfw-bypass:
   - "*.yinyuetai.com"
   - "*.yixia.com"
   - "*.ys168.com"
+  - "*.yuewen.com"
   - "*.yy.com"
-  - "*.zdfans.com"
+  - "*.yystatic.com"
   - "*.zealer.com"
   - "*.zhangzishi.cc"
   - "*.zhanqi.tv"
@@ -649,10 +783,6 @@ cfw-bypass:
   - "*.zhimg.com"
   - "*.zhongsou.com"
   - "*.zhuihd.com"
-  - "*.zmz001.com"
-  - "*.zmz002.com"
-  - "*.zmz003.com"
-  - "*.zmz004.com"
   - "localhost"
   - 127.*
   - 10.*
